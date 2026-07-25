@@ -1,0 +1,15 @@
+.emergency_screen {
+  min-height: 100vh;
+  background: #FDF6F5;
+  padding: 26px 20px 40px;
+}
+
+.em_red_card {
+  background: var(--danger-tint) !important;
+  box-shadow: none !important;
+}
+
+.em_yellow_card {
+  background: var(--warning-tint) !important;
+  box-shadow: none !important;
+}

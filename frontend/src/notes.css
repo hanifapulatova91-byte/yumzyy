@@ -1,0 +1,74 @@
+.grocery_page {
+  min-height: 100vh;
+  background: var(--bg);
+  padding: 26px 20px 40px;
+  max-width: 460px;
+  margin: 0 auto;
+}
+
+.grocery_header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.header_text h1 {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text);
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.header_text span {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.grocery_input_row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.grocery_input_row .input { flex: 1; }
+
+.grocery_content { display: flex; flex-direction: column; gap: 10px; }
+
+.grocery_card {
+  background: var(--surface);
+  border-radius: var(--r-lg);
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+  box-shadow: var(--sh-sm);
+  transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+  animation: fadeInUp 0.28s var(--ease) both;
+}
+.grocery_card:hover { transform: translateY(-2px); box-shadow: var(--sh-md); }
+.grocery_card.is_checked { opacity: 0.55; }
+.grocery_card.is_checked .item_name { text-decoration: line-through; }
+
+.checkbox_ui {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  border: 2px solid var(--border-strong);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: all var(--dur) var(--ease);
+}
+.is_checked .checkbox_ui {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+.inner_check { color: white; font-size: 14px; font-weight: 800; }
+
+.item_name { font-size: 15px; font-weight: 500; color: var(--text); }
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
