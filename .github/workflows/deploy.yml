@@ -30,7 +30,9 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
 
       - name: Install
-        run: npm ci
+        # `npm install` (not `npm ci`) because the lockfile is generated on Windows
+        # and misses Linux-only optional native deps (e.g. @emnapi/core on linux-x64).
+        run: npm install --no-audit --no-fund
 
       - name: Build
         run: npm run build
