@@ -15,10 +15,11 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
-// Allow the deployed frontend (FRONTEND_URL) + local dev on any port.
+// Allow the deployed frontends + local dev on any port.
 const allowedOrigins = [
   process.env.FRONTEND_URL,
-  'https://hanifapulatova91-byte.github.io',
+  'https://hanifapulatova91-byte.github.io',   // GitHub Pages (demo-mode build)
+  'https://yumzy-web.onrender.com',            // Render static site (real-backend build)
 ].filter(Boolean);
 
 const corsOptions = {

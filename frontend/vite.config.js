@@ -1,9 +1,13 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-// Deployed at https://hanifapulatova91-byte.github.io/yumzyy/
-// Local dev keeps base="/" so http://localhost:5173/ still works.
+// Base path resolution:
+// - GitHub Pages build (default):  base = '/yumzyy/'  (site served from /yumzyy/)
+// - Render / any host at root:     set VITE_BASE=/ in the build environment
+// - Local dev:                     always '/'
 export default defineConfig(({ command }) => ({
   plugins: [react()],
-  base: command === 'build' ? '/yumzyy/' : '/',
+  base: command === 'build'
+    ? (process.env.VITE_BASE || '/yumzyy/')
+    : '/',
 }))

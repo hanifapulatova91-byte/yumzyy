@@ -4,7 +4,12 @@ A full-stack allergy-safety assistant for travelers, immigrants, and anyone whos
 
 Point your camera at a barcode or an ingredient list — YumZy reads it, checks it against **your** allergen profile, and tells you (in your language) whether it's safe, worth caution, or dangerous.
 
-**Live demo:** https://hanifapulatova91-byte.github.io/yumzyy/
+## Two live URLs
+
+| URL | What it is |
+|---|---|
+| **https://hanifapulatova91-byte.github.io/yumzyy/** | GitHub Pages build. Frontend only, backend calls fall back to language-aware **demo data**. Always up, no cold start. |
+| **https://yumzy-web.onrender.com** | Render build. Same frontend, wired to the real backend — real GPT-4o, real Mongo, real allergen analysis. |
 
 ## What it does
 
@@ -19,12 +24,10 @@ Point your camera at a barcode or an ingredient list — YumZy reads it, checks 
 
 ## Tech
 
-- **Frontend:** React 19 + Vite → GitHub Pages
+- **Frontend:** React 19 + Vite → deployed to GitHub Pages (demo) and Render (real)
 - **Backend:** Node.js + Express, MongoDB Atlas → Render
 - **AI:** OpenAI (`gpt-4o-mini` for text + vision)
 - **Product data:** Open Food Facts API
-
-If the backend isn't reachable, the frontend falls back to language-aware demo data so the deployed URL still works.
 
 ---
 
@@ -47,37 +50,31 @@ Open http://localhost:5173.
 
 ---
 
-## Deploy to production (~15 min)
+## Deploy the "real" version to Render (~15 min)
 
-The frontend already auto-deploys to GitHub Pages on every push. To make the AI features actually work in the cloud, you need the backend live and connected. Steps:
+The Pages build already auto-deploys on every push. This section is only if you want the second URL where AI features actually run.
 
 ### 1. MongoDB Atlas (~3 min)
 - Create a free account at https://www.mongodb.com/cloud/atlas/register
 - Build a free M0 cluster (any region).
 - **Database Access → Add User** — set a username + password, save both.
-- **Network Access → Add IP** → *Allow access from anywhere* (0.0.0.0/0).
+- **Network Access → Add IP** → *Allow access from anywhere* (`0.0.0.0/0`).
 - **Connect → Drivers** — copy the connection string. Replace `<password>` with the one you set.
 
-### 2. Deploy the backend on Render (~5 min)
+### 2. Deploy the Blueprint on Render (~10 min)
 - Create a free account at https://render.com (sign in with GitHub).
-- Dashboard → **New +** → **Blueprint** → connect this repo. Render reads `render.yaml` and provisions the `yumzy-api` service.
-- On the created service page, go to **Environment** and fill in the two secrets marked `sync: false`:
+- Dashboard → **New +** → **Blueprint** → connect this repo. Render reads `render.yaml` and provisions **two** services: `yumzy-api` (backend) and `yumzy-web` (frontend static site).
+- On the `yumzy-api` service page → **Environment** tab → fill in the two secrets marked `sync: false`:
   - `MONGO_URI` = the connection string from step 1
   - `OPENAI_API_KEY` = your key from https://platform.openai.com/api-keys
-- Deploy. Wait ~2 min. When it's live, Render gives you a URL like `https://yumzy-api.onrender.com`.
-- Sanity check: open `https://yumzy-api.onrender.com/api` in a browser — should return `{ message: "🍏 YumZy /api is reachable!" }`.
-
-### 3. Point the frontend at the backend (~2 min)
-- Go to https://github.com/hanifapulatova91-byte/yumzyy/settings/secrets/actions
-- **New repository secret**:
-  - Name: `VITE_API_URL`
-  - Value: `https://yumzy-api.onrender.com/api` (your Render URL + `/api`)
-- Trigger a rebuild: either push any commit, or go to the **Actions** tab → latest workflow run → **Re-run all jobs**.
-- ~1 min later, the deployed app hits your real backend instead of demo data.
+- Deploy. Wait ~2 min for the backend, another ~2 min for the frontend.
+- Your two URLs:
+  - Backend: `https://yumzy-api.onrender.com` (health check: `/api`)
+  - Frontend (real): `https://yumzy-web.onrender.com`
 
 ### Notes
-- Render free tier spins the backend down after ~15 min of inactivity. First request after idle takes ~30 s to wake up — fine for a demo, not for production traffic.
-- If judges hit demo data anyway, check Render logs — most likely CORS or `VITE_API_URL` typo.
+- Render free tier spins the backend down after ~15 min of inactivity. First request after idle takes ~30 s to wake — fine for a demo, not for production traffic.
+- The Pages URL stays live and functional regardless (demo mode). Use it as a backup link if the Render service is asleep during judging.
 
 ---
 
@@ -85,8 +82,8 @@ The frontend already auto-deploys to GitHub Pages on every push. To make the AI 
 ```
 frontend/            React + Vite app
 server/              Node + Express + MongoDB API
-render.yaml          Render Blueprint (deploys backend)
-.github/workflows/   GitHub Pages auto-deploy for frontend
+render.yaml          Render Blueprint (deploys backend + frontend)
+.github/workflows/   GitHub Pages auto-deploy for the demo frontend
 ```
 
 Built for the **TKS Prompt to Product Challenge**, July 2026.

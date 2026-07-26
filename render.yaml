@@ -1,8 +1,16 @@
-# Render Blueprint — YumZy backend
-# Deploy: https://render.com/deploy?repo=https://github.com/hanifapulatova91-byte/yumzyy
-# Or: Render Dashboard → New → Blueprint → connect this repo → Render reads this file.
+# Render Blueprint — YumZy backend + frontend
+#
+# Deploy: Render Dashboard → New → Blueprint → connect this repo.
+# Render reads this file and provisions both services.
+#
+# Two-URL model:
+#   - GitHub Pages (auto):  https://hanifapulatova91-byte.github.io/yumzyy/   → demo-mode fallback
+#   - Render static site:   https://yumzy-web.onrender.com                    → real backend, real AI
 
 services:
+  # -----------------------------------------------------------------
+  # Backend API (Node + Express + Mongo + OpenAI)
+  # -----------------------------------------------------------------
   - type: web
     name: yumzy-api
     env: node
@@ -22,4 +30,25 @@ services:
       - key: OPENAI_API_KEY
         sync: false            # set manually in Render dashboard (secret)
       - key: FRONTEND_URL
-        value: https://hanifapulatova91-byte.github.io
+        value: https://yumzy-web.onrender.com
+
+  # -----------------------------------------------------------------
+  # Frontend static site — real-backend build of the same React app
+  # -----------------------------------------------------------------
+  - type: web
+    name: yumzy-web
+    env: static
+    region: frankfurt
+    plan: free
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_BASE
+        value: /
+      - key: VITE_API_URL
+        value: https://yumzy-api.onrender.com/api
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
