@@ -15,28 +15,15 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
-// Allow the deployed frontends + local dev on any port.
-const allowedOrigins = [
-  process.env.FRONTEND_URL,
-  'https://hanifapulatova91-byte.github.io',   // GitHub Pages (demo-mode build)
-  'https://yumzy-web.onrender.com',            // Render static site (real-backend build)
-].filter(Boolean);
-
-const corsOptions = {
-  origin: (origin, cb) => {
-    // Allow same-origin / server-side calls (no Origin header)
-    if (!origin) return cb(null, true);
-    // Local dev on any port
-    if (/^http:\/\/localhost:\d+$/.test(origin)) return cb(null, true);
-    // Explicit allow-list
-    if (allowedOrigins.includes(origin)) return cb(null, true);
-    // Anything else in dev: allow. In prod: block.
-    if (process.env.NODE_ENV !== 'production') return cb(null, true);
-    cb(new Error(`CORS blocked: ${origin}`));
-  },
+// Permissive CORS: reflect any origin. Safe for a public read/write demo app
+// where auth is per-user JWT, not per-origin. Simplifies deployment across
+// GitHub Pages, Render static, Vercel, and local dev without extra config.
+app.use(cors({
+  origin: true,
+  credentials: true,
   optionsSuccessStatus: 200,
-};
-app.use(cors(corsOptions));
+}));
+app.options('*', cors({ origin: true, credentials: true }));
 app.use(helmet());
 app.use(morgan('dev'));
 app.use(express.json({ limit: '10mb' }));
