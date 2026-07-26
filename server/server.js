@@ -23,7 +23,6 @@ app.use(cors({
   credentials: true,
   optionsSuccessStatus: 200,
 }));
-app.options('*', cors({ origin: true, credentials: true }));
 app.use(helmet());
 app.use(morgan('dev'));
 app.use(express.json({ limit: '10mb' }));
