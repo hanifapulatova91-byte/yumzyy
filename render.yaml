@@ -45,7 +45,7 @@ services:
       - key: VITE_BASE
         value: /
       - key: VITE_API_URL
-        value: https://yumzy-api.onrender.com/api
+        value: https://yumzy-api-rbo2.onrender.com/api
     routes:
       - type: rewrite
         source: /*
