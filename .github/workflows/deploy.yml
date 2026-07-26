@@ -35,6 +35,11 @@ jobs:
         run: npm install --no-audit --no-fund
 
       - name: Build
+        # VITE_API_URL is read at build time by frontend/src/api.js.
+        # Set it in GitHub repo Settings → Secrets and variables → Actions → New repository secret.
+        # If unset, api.js falls back to localhost and the deployed app runs in demo mode.
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
         run: npm run build
 
       - name: Upload Pages artifact

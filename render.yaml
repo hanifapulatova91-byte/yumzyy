@@ -1,0 +1,25 @@
+# Render Blueprint — YumZy backend
+# Deploy: https://render.com/deploy?repo=https://github.com/hanifapulatova91-byte/yumzyy
+# Or: Render Dashboard → New → Blueprint → connect this repo → Render reads this file.
+
+services:
+  - type: web
+    name: yumzy-api
+    env: node
+    region: frankfurt   # closest free region to Uzbekistan
+    plan: free
+    rootDir: server
+    buildCommand: npm install
+    startCommand: node server.js
+    healthCheckPath: /api
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGO_URI
+        sync: false            # set manually in Render dashboard (secret)
+      - key: JWT_SECRET
+        generateValue: true    # Render auto-generates a strong random string
+      - key: OPENAI_API_KEY
+        sync: false            # set manually in Render dashboard (secret)
+      - key: FRONTEND_URL
+        value: https://hanifapulatova91-byte.github.io

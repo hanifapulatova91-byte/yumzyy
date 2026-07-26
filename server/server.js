@@ -15,9 +15,25 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
+// Allow the deployed frontend (FRONTEND_URL) + local dev on any port.
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  'https://hanifapulatova91-byte.github.io',
+].filter(Boolean);
+
 const corsOptions = {
-  origin: process.env.FRONTEND_URL || '*',
-  optionsSuccessStatus: 200
+  origin: (origin, cb) => {
+    // Allow same-origin / server-side calls (no Origin header)
+    if (!origin) return cb(null, true);
+    // Local dev on any port
+    if (/^http:\/\/localhost:\d+$/.test(origin)) return cb(null, true);
+    // Explicit allow-list
+    if (allowedOrigins.includes(origin)) return cb(null, true);
+    // Anything else in dev: allow. In prod: block.
+    if (process.env.NODE_ENV !== 'production') return cb(null, true);
+    cb(new Error(`CORS blocked: ${origin}`));
+  },
+  optionsSuccessStatus: 200,
 };
 app.use(cors(corsOptions));
 app.use(helmet());
